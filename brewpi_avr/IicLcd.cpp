@@ -8,29 +8,17 @@
 
 
 #include "IicLcd.h"
-#include <inttypes.h>
-#if defined(ARDUINO) && ARDUINO >= 100
 
+#include "Brewpi.h"
+#include <stdio.h>
+#include <string.h>
+#include <inttypes.h>
+#include <inttypes.h>
 #include "Arduino.h"
 
-#define printIIC(args)	Wire.write(args)
-inline size_t IIClcd::write(uint8_t value) {
-	send(value, Rs);
-	return 0;
+extern "C" {
+  #include "Twi.h"
 }
-
-#else
-#include "WProgram.h"
-
-#define printIIC(args)	Wire.send(args)
-inline void IIClcd::write(uint8_t value) {
-	send(value, Rs);
-}
-
-#endif
-#include "Wire.h"
-
-
 
 // When the display powers up, it is configured as follows:
 //
@@ -61,11 +49,12 @@ IIClcd::IIClcd(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows)
 
 void IIClcd::init(){
 	init_priv();
+    _backlightTime = 0;
 }
 
 void IIClcd::init_priv()
 {
-	Wire.begin();
+	twi_init();
 	_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
 	begin(_cols, _rows);
 }
@@ -75,6 +64,8 @@ void IIClcd::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
 		_displayfunction |= LCD_2LINE;
 	}
 	_numlines = lines;
+    _currline = 0;
+    _currpos = 0;
 
 	// for some 1 line displays you can select a 10 pixel high font
 	if ((dotsize != 0) && (lines == 1)) {
@@ -133,6 +124,14 @@ void IIClcd::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
 /********** high level commands, for the user! */
 void IIClcd::clear(){
 	command(LCD_CLEARDISPLAY);// clear display, set cursor position to zero
+
+    for(uint8_t i = 0; i < _rows; i++){
+        for(uint8_t j = 0; j < _cols; j++){
+            content[i][j]=' '; // initialize on all spaces
+        }
+        content[i][_cols]='\0'; // NULL terminate string
+    }
+
 	delayMicroseconds(2000);  // this command takes a long time!
 }
 
@@ -146,6 +145,9 @@ void IIClcd::setCursor(uint8_t col, uint8_t row){
 	if ( row > _numlines ) {
 		row = _numlines-1;    // we count rows starting w/0
 	}
+
+    _currline = row;
+    _currpos = col;
 	command(LCD_SETDDRAMADDR | (col + row_offsets[row]));
 }
 
@@ -240,6 +242,14 @@ inline void IIClcd::command(uint8_t value) {
 	send(value, 0);
 }
 
+inline size_t IIClcd::write(uint8_t value) {
+    content[_currline][_currpos] = value;
+    _currpos++;
+    if (!_bufferOnly) {
+        send(value, Rs);
+    }
+    return 0;
+}
 
 /************ low level data pushing commands **********/
 
@@ -256,10 +266,9 @@ void IIClcd::write4bits(uint8_t value) {
 	pulseEnable(value);
 }
 
-void IIClcd::expanderWrite(uint8_t _data){
-	Wire.beginTransmission(_Addr);
-	printIIC((int)(_data) | _backlightval);
-	Wire.endTransmission();
+void IIClcd::expanderWrite(uint8_t _data) {
+    uint8_t data = ((uint8_t)(_data) | _backlightval);
+    twi_writeTo(_Addr, &data, 1, true, true);
 }
 
 void IIClcd::pulseEnable(uint8_t _data){
@@ -270,52 +279,41 @@ void IIClcd::pulseEnable(uint8_t _data){
 	delayMicroseconds(50);		// commands need > 37us to settle
 }
 
-
-// Alias functions
-
-void IIClcd::cursor_on(){
-	cursor();
+// This resets the backlight timer and updates the SPI output
+void IIClcd::resetBacklightTimer(void) {
+    _backlightTime = ticks.seconds();
 }
 
-void IIClcd::cursor_off(){
-	noCursor();
+void IIClcd::updateBacklight(void) {
+    // True = OFF, False = ON
+    bool backLightOutput = BREWPI_SIMULATE || ticks.timeSince(_backlightTime) > BACKLIGHT_AUTO_OFF_PERIOD;
+    if(backLightOutput) {
+        noBacklight();
+    } else {
+        backlight();
+    }
 }
 
-void IIClcd::blink_on(){
-	blink();
+// Puts the content of one LCD line into the provided buffer.
+void IIClcd::getLine(uint8_t lineNumber, char * buffer){
+    const char* src = content[lineNumber];
+    for(uint8_t i = 0; i < _cols;i++){
+        char c = src[i];
+        buffer[i] = (c == 0b11011111) ? 0xB0 : c;
+    }
+    buffer[_cols] = '\0'; // NULL terminate string
 }
 
-void IIClcd::blink_off(){
-	noBlink();
+void IIClcd::printSpacesToRestOfLine(void){
+    while(_currpos < _cols){
+        print(' ');
+    }
 }
 
-void IIClcd::load_custom_character(uint8_t char_num, uint8_t *rows){
-		createChar(char_num, rows);
+#ifndef print_P_inline
+void IIClcd::print_P(const char * str){ // print a string stored in PROGMEM
+    char buf[21]; // create buffer in RAM
+    strcpy_P(buf, str); // copy string to RAM
+    print(buf); // print from RAM
 }
-
-void IIClcd::setBacklight(uint8_t new_val){
-	if(new_val){
-		backlight();		// turn backlight on
-	}else{
-		noBacklight();		// turn backlight off
-	}
-}
-
-void IIClcd::printstr(const char c[]){
-	//This function is not identical to the function used for "real" I2C displays
-	//it's here so the user sketch doesn't have to be changed
-	print(c);
-}
-
-
-// unsupported API functions
-void IIClcd::off(){}
-void IIClcd::on(){}
-void IIClcd::setDelay (int cmdDelay,int charDelay) {}
-uint8_t IIClcd::status(){return 0;}
-uint8_t IIClcd::keypad (){return 0;}
-uint8_t IIClcd::init_bargraph(uint8_t graphtype){return 0;}
-void IIClcd::draw_horizontal_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_col_end){}
-void IIClcd::draw_vertical_graph(uint8_t row, uint8_t column, uint8_t len,  uint8_t pixel_row_end){}
-void IIClcd::setContrast(uint8_t new_val){}
-
+#endif

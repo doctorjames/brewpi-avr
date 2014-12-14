@@ -149,8 +149,7 @@ $(SRC)TempControl.cpp \
 $(SRC)TemperatureFormats.cpp \
 $(SRC)TempSensor.cpp \
 $(SRC)Ticks.cpp \
-$(SRC)Twi.cpp \
-$(SRC)Wire.cpp
+$(SRC)Twi.cpp
 
 
 PREPROCESSING_SRCS +=
@@ -192,8 +191,7 @@ $(OBJ_DIR)TempControl.o \
 $(OBJ_DIR)TemperatureFormats.o \
 $(OBJ_DIR)TempSensor.o \
 $(OBJ_DIR)Ticks.o \
-$(OBJ_DIR)Twi.o \
-$(OBJ_DIR)Wire.o
+$(OBJ_DIR)Twi.o
 
 OBJS_AS_ARGS +=  \
 $(OBJ_DIR)Actuator.o \
@@ -228,8 +226,7 @@ $(OBJ_DIR)TempControl.o \
 $(OBJ_DIR)TemperatureFormats.o \
 $(OBJ_DIR)TempSensor.o \
 $(OBJ_DIR)Ticks.o \
-$(OBJ_DIR)Twi.o \
-$(OBJ_DIR)Wire.o
+$(OBJ_DIR)Twi.o
 
 C_DEPS +=  \
 $(OBJ_DIR)Actuator.d \
@@ -264,8 +261,7 @@ $(OBJ_DIR)TempControl.d \
 $(OBJ_DIR)TemperatureFormats.d \
 $(OBJ_DIR)TempSensor.d \
 $(OBJ_DIR)Ticks.d \
-$(OBJ_DIR)Twi.d \
-$(OBJ_DIR)Wire.d
+$(OBJ_DIR)Twi.d
 
 C_DEPS_AS_ARGS +=  \
 $(OBJ_DIR)Actuator.d \
@@ -300,8 +296,7 @@ $(OBJ_DIR)TempControl.d \
 $(OBJ_DIR)TemperatureFormats.d \
 $(OBJ_DIR)TempSensor.d \
 $(OBJ_DIR)Ticks.d \
-$(OBJ_DIR)Twi.d \
-$(OBJ_DIR)Wire.d
+$(OBJ_DIR)Twi.d
 
 OUTPUT_FILE_PATH +=$(OUTPUT_DIR)$(TARGET_NAME).elf
 

@@ -107,9 +107,14 @@
 
 // #define BREWPI_IIC       1      // LCD display connected to I2C.
 // #define BREWPI_OLED      1
- #define BREWPI_SHIFT_LCD 1
+#define BREWPI_SHIFT_LCD 1
 
 #endif // endif BREWPI_LCD
+
+/**
+ * Turn off LCD backlight after this time. Seconds.
+ */
+#define BACKLIGHT_AUTO_OFF_PERIOD 60
 
 #ifndef BREWPI_BUZZER
 	#if BREWPI_STATIC_CONFIG==BREWPI_SHIELD_DIY
