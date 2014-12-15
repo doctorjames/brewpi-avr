@@ -4,17 +4,17 @@
 # Copyright 2014 Matthew McGowan
 #
 # This file is part of BrewPi.
-# 
+#
 # BrewPi is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # BrewPi is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with BrewPi.  If not, see <http://www.gnu.org/licenses/>.
 #
@@ -71,7 +71,7 @@ DEFINES = \
  -DF_CPU=16000000L \
  -DBUILD_NUMBER=$(BUILD_NUMBER) \
  -DBUILD_NAME="\"$(BUILD_NAME)"\"
- 
+
 ifeq ($(BOARD),leonardo)
 	MCU = atmega32u4
 	MCU_HEADERS = leonardo
@@ -87,21 +87,21 @@ MCU_INCLUDE ?= $(MCU_INCLUDE_VARIANT)/$(MCU_HEADERS)
 
 USER_OBJS :=
 
-LIBS := 
-PROJ := 
+LIBS :=
+PROJ :=
 
-O_SRCS := 
-C_SRCS := 
-S_SRCS := 
-S_UPPER_SRCS := 
-OBJ_SRCS := 
-ASM_SRCS := 
-PREPROCESSING_SRCS := 
-OBJS := 
-OBJS_AS_ARGS := 
-C_DEPS := 
-C_DEPS_AS_ARGS := 
-EXECUTABLES := 
+O_SRCS :=
+C_SRCS :=
+S_SRCS :=
+S_UPPER_SRCS :=
+OBJ_SRCS :=
+ASM_SRCS :=
+PREPROCESSING_SRCS :=
+OBJS :=
+OBJS_AS_ARGS :=
+C_DEPS :=
+C_DEPS_AS_ARGS :=
+EXECUTABLES :=
 OUTPUT_FILE_PATH :=
 OUTPUT_FILE_PATH_AS_ARGS :=
 AVR_APP_PATH :=$$$AVR_APP_PATH$$$
@@ -115,7 +115,7 @@ SUBDIRS :=  \
 $(SRC)fallback
 
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 C_SRCS +=  \
 $(SRC)Actuator.cpp \
 $(SRC)ActuatorArduino.cpp \
@@ -131,6 +131,7 @@ $(SRC)DS2413.cpp \
 $(SRC)EepromManager.cpp \
 $(SRC)FilterCascaded.cpp \
 $(SRC)FilterFixed.cpp \
+$(SRC)IicLcd.cpp \
 $(SRC)Logger.cpp \
 $(SRC)Main.cpp \
 $(SRC)Menu.cpp \
@@ -147,13 +148,14 @@ $(SRC)SpiLcd.cpp \
 $(SRC)TempControl.cpp \
 $(SRC)TemperatureFormats.cpp \
 $(SRC)TempSensor.cpp \
-$(SRC)Ticks.cpp
+$(SRC)Ticks.cpp \
+$(SRC)Twi.cpp
 
 
-PREPROCESSING_SRCS += 
+PREPROCESSING_SRCS +=
 
 
-ASM_SRCS += 
+ASM_SRCS +=
 
 
 OBJS +=  \
@@ -171,6 +173,7 @@ $(OBJ_DIR)DS2413.o \
 $(OBJ_DIR)EepromManager.o \
 $(OBJ_DIR)FilterCascaded.o \
 $(OBJ_DIR)FilterFixed.o \
+$(OBJ_DIR)IicLcd.o \
 $(OBJ_DIR)Logger.o \
 $(OBJ_DIR)Main.o \
 $(OBJ_DIR)Menu.o \
@@ -187,7 +190,8 @@ $(OBJ_DIR)SpiLcd.o \
 $(OBJ_DIR)TempControl.o \
 $(OBJ_DIR)TemperatureFormats.o \
 $(OBJ_DIR)TempSensor.o \
-$(OBJ_DIR)Ticks.o
+$(OBJ_DIR)Ticks.o \
+$(OBJ_DIR)Twi.o
 
 OBJS_AS_ARGS +=  \
 $(OBJ_DIR)Actuator.o \
@@ -204,6 +208,7 @@ $(OBJ_DIR)DS2413.o \
 $(OBJ_DIR)EepromManager.o \
 $(OBJ_DIR)FilterCascaded.o \
 $(OBJ_DIR)FilterFixed.o \
+$(OBJ_DIR)IicLcd.o \
 $(OBJ_DIR)Logger.o \
 $(OBJ_DIR)Main.o \
 $(OBJ_DIR)Menu.o \
@@ -220,7 +225,8 @@ $(OBJ_DIR)SpiLcd.o \
 $(OBJ_DIR)TempControl.o \
 $(OBJ_DIR)TemperatureFormats.o \
 $(OBJ_DIR)TempSensor.o \
-$(OBJ_DIR)Ticks.o
+$(OBJ_DIR)Ticks.o \
+$(OBJ_DIR)Twi.o
 
 C_DEPS +=  \
 $(OBJ_DIR)Actuator.d \
@@ -237,6 +243,7 @@ $(OBJ_DIR)DS2413.d \
 $(OBJ_DIR)EepromManager.d \
 $(OBJ_DIR)FilterCascaded.d \
 $(OBJ_DIR)FilterFixed.d \
+$(OBJ_DIR)IicLcd.d \
 $(OBJ_DIR)Logger.d \
 $(OBJ_DIR)Main.d \
 $(OBJ_DIR)Menu.d \
@@ -253,7 +260,8 @@ $(OBJ_DIR)SpiLcd.d \
 $(OBJ_DIR)TempControl.d \
 $(OBJ_DIR)TemperatureFormats.d \
 $(OBJ_DIR)TempSensor.d \
-$(OBJ_DIR)Ticks.d
+$(OBJ_DIR)Ticks.d \
+$(OBJ_DIR)Twi.d
 
 C_DEPS_AS_ARGS +=  \
 $(OBJ_DIR)Actuator.d \
@@ -270,6 +278,7 @@ $(OBJ_DIR)DS2413.d \
 $(OBJ_DIR)EepromManager.d \
 $(OBJ_DIR)FilterCascaded.d \
 $(OBJ_DIR)FilterFixed.d \
+$(OBJ_DIR)IicLcd.d \
 $(OBJ_DIR)Logger.d \
 $(OBJ_DIR)Main.d \
 $(OBJ_DIR)Menu.d \
@@ -286,7 +295,8 @@ $(OBJ_DIR)SpiLcd.d \
 $(OBJ_DIR)TempControl.d \
 $(OBJ_DIR)TemperatureFormats.d \
 $(OBJ_DIR)TempSensor.d \
-$(OBJ_DIR)Ticks.d
+$(OBJ_DIR)Ticks.d \
+$(OBJ_DIR)Twi.d
 
 OUTPUT_FILE_PATH +=$(OUTPUT_DIR)$(TARGET_NAME).elf
 
@@ -296,7 +306,7 @@ ADDITIONAL_DEPENDENCIES:=
 
 OUTPUT_FILE_DEP:= ./makedep.mk
 
-LIB_DEP+= 
+LIB_DEP+=
 
 # AVR32/GNU C Compiler
 
@@ -310,7 +320,7 @@ LIB_DEP+=
 	@echo Invoking: AVR8/GNU C Compiler
 	"$(AVRGCC)" $(DEFINES) -mcall-prologues -funsigned-char -funsigned-bitfields -I"$(ARDUINO_HEADERS)" -I"$(MCU_INCLUDE)" -I"$(SRC)/fallback"  -Os -fno-split-wide-types -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g3 -Wall -mmcu=$(MCU) -c -fno-exceptions -ffreestanding -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$(OBJ_DIR)" "$<"
 	@echo Finished building: $<
-	
+
 # AVR32/GNU Preprocessing Assembler
 
 # AVR32/GNU Assembler
@@ -321,7 +331,7 @@ ifneq ($(strip $(C_DEPS)),)
 endif
 endif
 
-# Add inputs and outputs from these tool invocations to the build variables 
+# Add inputs and outputs from these tool invocations to the build variables
 
 # All Target
 all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
@@ -329,23 +339,23 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP)
 	@echo Building target: $@
 	@echo Invoking: AVR8/GNU Linker
-	"$(AVRGCC)" -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="$(OUTPUT_DIR)$(TARGET_NAME).map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mmcu=$(MCU) -Wl,--relax 
+	"$(AVRGCC)" -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="$(OUTPUT_DIR)$(TARGET_NAME).map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mmcu=$(MCU) -Wl,--relax
 	@echo Finished building target: $@
 	"$(AVROBJCOPY)" -O ihex -R .eeprom -R .fuse -R .lock -R .signature  "$(OUTPUT_DIR)$(TARGET_NAME).elf" "$(OUTPUT_DIR)$(TARGET_NAME).hex"
-	
+
 	"$(AVROBJCOPY)" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "$(OUTPUT_DIR)$(TARGET_NAME).elf" "$(OUTPUT_DIR)$(TARGET_NAME).eep" || exit 0
-	
+
 	"$(AVROBJDUMP)" -h -S "$(OUTPUT_DIR)$(TARGET_NAME).elf" > "$(OUTPUT_DIR)$(TARGET_NAME).lss"
-	
+
 	"$(AVROBJCOPY)" -O srec -R .eeprom -R .fuse -R .lock -R .signature  "$(OUTPUT_DIR)$(TARGET_NAME).elf" "$(OUTPUT_DIR)$(TARGET_NAME).srec"
-	
+
 	"$(AVRSIZE)" "$(OUTPUT_DIR)$(TARGET_NAME).elf" > "$(OUTPUT_DIR)$(TARGET_NAME).elf.size"
 
-	
+
 
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
-	-$(RM) $(C_DEPS_AS_ARGS)   
+	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)
+	-$(RM) $(C_DEPS_AS_ARGS)
 	-$(RM) "$(OUTPUT_DIR)$(TARGET_NAME).elf" "$(OUTPUT_DIR)$(TARGET_NAME).a" "$(OUTPUT_DIR)$(TARGET_NAME).hex" "$(OUTPUT_DIR)$(TARGET_NAME).lss" "$(OUTPUT_DIR)$(TARGET_NAME).eep" "$(OUTPUT_DIR)$(TARGET_NAME).map" "$(OUTPUT_DIR)$(TARGET_NAME).srec"

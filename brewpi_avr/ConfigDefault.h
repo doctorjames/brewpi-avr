@@ -3,17 +3,17 @@
  * Copyright 2013 Matthew McGowan
  *
  * This file is part of BrewPi.
- * 
+ *
  * BrewPi is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * BrewPi is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with BrewPi.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,18 +26,6 @@
 
 #ifndef BREWPI_STATIC_CONFIG
 #define BREWPI_STATIC_CONFIG BREWPI_SHIELD_REV_C
-#endif
-
-/*
- * LCD Display using a shift register.
- * For diy-shields prior to the revA shield, this should be set to 0.
- */
-#ifndef BREWPI_SHIFT_LCD	
-#if BREWPI_STATIC_CONFIG != BREWPI_SHIELD_DIY
-	#define BREWPI_SHIFT_LCD 1
-#else
-	#define BREWPI_SHIFT_LCD 0
-#endif
 #endif
 
 // Enable printing debug only log messages and debug only wrapped statements
@@ -58,8 +46,8 @@
 #endif
 
 #ifndef BREWPI_LOG_WARNINGS
-#define BREWPI_LOG_WARNINGS 1 
-#endif 
+#define BREWPI_LOG_WARNINGS 1
+#endif
 
 #ifndef BREWPI_LOG_INFO
 #define BREWPI_LOG_INFO 1
@@ -85,7 +73,7 @@
 #define TEMP_CONTROL_STATIC 1
 #endif
 
-#ifndef FAST_DIGITAL_PIN 
+#ifndef FAST_DIGITAL_PIN
 #define FAST_DIGITAL_PIN 0
 #endif
 
@@ -98,7 +86,7 @@
 #endif
 
 /**
- * Enable DS2413 Actuators. 
+ * Enable DS2413 Actuators.
  */
 #ifndef BREWPI_DS2413
 #define BREWPI_DS2413 0
@@ -112,11 +100,21 @@
 #endif
 
 /**
- * Enable the LCD display. Without this, a NullDisplay is used
+ * Enable the LCD display and select its type. Without this, a NullDisplay is used.
  */
 #ifndef BREWPI_LCD
 #define BREWPI_LCD 1
-#endif
+
+// #define BREWPI_IIC       1      // LCD display connected to I2C.
+// #define BREWPI_OLED      1
+#define BREWPI_SHIFT_LCD 1
+
+#endif // endif BREWPI_LCD
+
+/**
+ * Turn off LCD backlight after this time. Seconds.
+ */
+#define BACKLIGHT_AUTO_OFF_PERIOD 60
 
 #ifndef BREWPI_BUZZER
 	#if BREWPI_STATIC_CONFIG==BREWPI_SHIELD_DIY
@@ -131,7 +129,7 @@
 	#define BREWPI_ROTARY_ENCODER 0
 #else
 	#define BREWPI_ROTARY_ENCODER 1
-#endif	
+#endif
 #endif
 
 #ifndef BREWPI_EEPROM_HELPER_COMMANDS
